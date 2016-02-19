@@ -1,15 +1,33 @@
 var app = require('../app');
 var debug = require('debug')('app:server');
+var debugio = require('debug')('app:io');
 var http = require('http');
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 var server = http.createServer(app);
+var io = require('socket.io')(server);
 
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+var users = 0;
+
+io.on('connection', function(socket){
+
+  users++;
+  debugio('A user connected');
+
+  
+
+  socket.on('disconnect', function(){
+    users--;
+    debugio('User disconnected');
+  });
+
+});
 
 function normalizePort(val) {
   var port = parseInt(val, 10);
