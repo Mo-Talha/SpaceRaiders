@@ -4,19 +4,29 @@
         <h3>I want to play as..</h3>
         <fieldset>
             <form name="loginForm">
-                <input type="text" placeholder="Username" ng-model="user.username" required autofocus>
+                <input id="username" type="text" placeholder="Username" ng-model="user.username" required autofocus>
                 <div style="text-align:center">
-                    <button type="submit" class="btn btn-primary" ng-click="register()" ng-disabled="loginForm.$invalid">
+                    <div id="message"></div>
+                    <button id="randomButton" type="submit" class="btn btn-primary" ng-disabled="loginForm.$invalid">
                         <i class="fa fa-random"></i>
                         Random
                     </button>
-                    <button type="submit" class="btn btn-success" ng-disabled="loginForm.$invalid">
+                    <button id="playerButton" type="submit" class="btn btn-success" ng-disabled="loginForm.$invalid">
                         <i class="fa fa-user"></i>
                         Player
                     </button>
-                    {{test}}
                 </div>
             </form>
         </fieldset>
     </div>
 </div>
+
+<script>
+    $('#randomButton').click(function () {
+        socket.emit('NEWUSER', $('#username').val());
+    });
+
+    socket.on('MESSAGE', function (msg) {
+        $("#message").html(msg);
+    });
+</script>

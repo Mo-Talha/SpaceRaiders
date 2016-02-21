@@ -15,18 +15,32 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 io.on('connection', function(socket){
-  debugio('A user connected');
+  debugio('A user connected to the app');
 
-  socket.on('NEWUSER', function(data){
-    if (!users.hasOwnProperty(data.username)){
-      users[data.username] = socket;
+  socket.on('NEWUSER', function(username){
+    if (!users.hasOwnProperty(username)){
+      debugio('Creating new user: ' + username);
+      users[username] = socket;
+    } else {
+      debugio('Cannot create user, Username: ' + username + ' already in use');
+      users[username].emit('MESSAGE', 'Username in use.');
     }
-    users[data.username].socket.emit('MESSAGE', 'Username in use.');
   });
 
   socket.on('disconnect', function(){
-    debugio('User disconnected');
+    for (var username in users){
+      if (users.hasOwnProperty(username)){
+        if (socket.id === users[username].id){
+          debugio('User disconnected, deleting user: ' + username);
+          delete users[username];
+        }
+      }
+    }
   });
+
+
+
+
 });
 
 function normalizePort(val) {

@@ -22,18 +22,9 @@ html(lang="en", ng-app="spaceraiders.app")
     div(ui-view ng-cloak)
 
 script.
+  var socket = io();
+
   $(document).ready(function(){
-
-    var socket = io();
-
-
-    //register = function () {
-      //socket.emit('NEWUSER', $scope.user);
-    //};
-
-    socket.on('MESSAGE', function (msg) {
-      console.log(msg);
-    });
 
     $(window).mousemove(function(event) {
 
@@ -42,7 +33,6 @@ script.
       //console.log('Y:' + event.pageY);
 
       //$("#spaceship").css({"left" : event.pageX - 50, "top" : event.pageY - 70});
-
 
     });
   });
