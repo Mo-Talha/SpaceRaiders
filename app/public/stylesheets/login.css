@@ -1,0 +1,90 @@
+* {
+    box-sizing: border-box;
+}
+*:before, *:after {
+    box-sizing: border-box;
+}
+
+body {
+    background: #eaeaea;
+    color: #999;
+    font: 400 16px/1.5em sans-serif;
+    margin: 0;
+}
+
+h3 {
+    margin: 0;
+}
+
+fieldset {
+    border: none;
+    margin: 0;
+}
+
+input {
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    margin: 0;
+    -webkit-appearance: none;
+}
+
+input:focus {
+    outline: none;
+}
+
+.login-container {
+    left: 50%;
+    position: fixed;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+#login-form {
+    width: 300px;
+}
+
+#login-form h3 {
+    background-color: #282830;
+    border-radius: 5px 5px 0 0;
+    color: #fff;
+    font-size: 14px;
+    padding: 20px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+#login-form fieldset {
+    background: #fff;
+    border-radius: 0 0 5px 5px;
+    padding: 20px;
+    position: relative;
+}
+
+#login-form fieldset:before {
+    background-color: #fff;
+    content: "";
+    height: 8px;
+    left: 50%;
+    margin: -4px 0 0 -4px;
+    position: absolute;
+    top: 0;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    width: 8px;
+}
+
+#login-form input {
+    font-size: 14px;
+    border: 1px solid #dcdcdc;
+    padding: 12px 10px;
+    width: 100%;
+}
+
+#login-form button {
+    border-radius: 3px;
+    font-weight: bold;
+    margin-top: 20px;
+    padding: 8px 13px;
+}

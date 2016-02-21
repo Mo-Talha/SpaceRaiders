@@ -1,34 +1,48 @@
 doctype html
-html(lang="en")
+html(lang="en", ng-app="spaceraiders.app")
   head
     title Space Raiders
     link(rel="stylesheet", href="stylesheets/style.css")
-    script(type="text/javascript", src="javascripts/jquery-1.12.0.min.js")
+    link(rel="stylesheet", href="stylesheets/font-awesome.min.css")
+    link(rel="stylesheet", href="stylesheets/bootstrap.min.css")
+    script(type="text/javascript", src="javascripts/dependencies/jquery-1.12.0.min.js")
+    script(type="text/javascript", src="javascripts/dependencies/angular.min.js")
+    script(type="text/javascript", src="javascripts/dependencies/angular-ui-router.min.js")
     script(type="text/javascript", src="/socket.io/socket.io.js")
+    script(type="text/javascript", src="javascripts/CoreController.js")
+    script(type="text/javascript", src="javascripts/CoreServices.js")
+    script(type="text/javascript", src="javascripts/CoreRoutes.js")
+    script(type="text/javascript", src="javascripts/CoreModule.js")
 
-  body
+  body(ng-controller="spaceraiderController")
     div(class="background")
       #stars
       #stars2
       #stars3
-
-  img(id="alien", src="images/alien.png")
-  img(id="spaceship", src="images/spaceship.png")
+    div(ui-view ng-cloak)
 
 script.
-  var socket = io();
-
-  /*
   $(document).ready(function(){
+
+    var socket = io();
+
+
+    //register = function () {
+      //socket.emit('NEWUSER', $scope.user);
+    //};
+
+    socket.on('MESSAGE', function (msg) {
+      console.log(msg);
+    });
+
     $(window).mousemove(function(event) {
 
-      console.log('X:' + event.pageX);
+      //console.log('X:' + event.pageX);
 
-      console.log('Y:' + event.pageY);
+      //console.log('Y:' + event.pageY);
 
-      $("#spaceship").css({"left" : event.pageX - 50, "top" : event.pageY - 70});
+      //$("#spaceship").css({"left" : event.pageX - 50, "top" : event.pageY - 70});
 
 
     });
   });
-  */
