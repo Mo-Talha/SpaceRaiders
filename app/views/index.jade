@@ -14,25 +14,9 @@ html(lang="en", ng-app="spaceraiders.app")
     script(type="text/javascript", src="javascripts/CoreRoutes.js")
     script(type="text/javascript", src="javascripts/CoreModule.js")
 
-  body(ng-controller="spaceraiderController")
+  body(ng-controller="coreController")
     div(class="background")
       #stars
       #stars2
       #stars3
     div(ui-view ng-cloak)
-
-script.
-  var socket = io();
-
-  $(document).ready(function(){
-
-    $(window).mousemove(function(event) {
-
-      //console.log('X:' + event.pageX);
-
-      //console.log('Y:' + event.pageY);
-
-      //$("#spaceship").css({"left" : event.pageX - 50, "top" : event.pageY - 70});
-
-    });
-  });

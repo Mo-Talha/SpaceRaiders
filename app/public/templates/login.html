@@ -3,11 +3,13 @@
     <div id="login-form">
         <h3>I want to play as..</h3>
         <fieldset>
-            <form name="loginForm">
-                <input id="username" type="text" placeholder="Username" ng-model="user.username" required autofocus>
+            <form name="loginForm" novalidate>
+                <input type="text" placeholder="Username" ng-model="username" required autofocus>
+                <input type="text" placeholder="Against" ng-model="opponent" required>
                 <div style="text-align:center">
-                    <div id="message"></div>
-                    <button id="randomButton" type="submit" class="btn btn-primary" ng-disabled="loginForm.$invalid">
+                    <div id="message" style="font-size: 12px;color:#d9534f;"></div>
+                    <div id="wait" style="color:#282830;"></div>
+                    <button id="randomButton" type="submit" class="btn btn-primary">
                         <i class="fa fa-random"></i>
                         Random
                     </button>
@@ -20,13 +22,3 @@
         </fieldset>
     </div>
 </div>
-
-<script>
-    $('#randomButton').click(function () {
-        socket.emit('NEWUSER', $('#username').val());
-    });
-
-    socket.on('MESSAGE', function (msg) {
-        $("#message").html(msg);
-    });
-</script>

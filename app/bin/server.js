@@ -8,7 +8,6 @@ app.set('port', port);
 
 var server = http.createServer(app);
 var io = require('socket.io')(server);
-var users = require('./user');
 
 server.listen(port);
 server.on('error', onError);
@@ -17,29 +16,33 @@ server.on('listening', onListening);
 io.on('connection', function(socket){
   debugio('A user connected to the app');
 
-  socket.on('NEWUSER', function(username){
-    if (!users.hasOwnProperty(username)){
-      debugio('Creating new user: ' + username);
-      users[username] = socket;
-    } else {
-      debugio('Cannot create user, Username: ' + username + ' already in use');
-      users[username].emit('MESSAGE', 'Username in use.');
-    }
-  });
+  socket.on('NEWRANDOMUSER', function(){
+    debugio('Creating new random user with socket id: ' + socket.id);
+    socket.userId = socket.id;
+    debugio('Searching for random opponent for user');
 
-  socket.on('disconnect', function(){
-    for (var username in users){
-      if (users.hasOwnProperty(username)){
-        if (socket.id === users[username].id){
-          debugio('User disconnected, deleting user: ' + username);
-          delete users[username];
+    var sockets = io.sockets.sockets;
+
+    for (var id in sockets){
+      if (sockets.hasOwnProperty(id) && sockets[id].hasOwnProperty('userId')){
+        if (id !== socket.id){
+          var lenRooms = Object.keys(sockets[id].rooms).length;
+          if (lenRooms === 1){
+            debugio('Random opponent found with socket id: ' + id);
+            socket.join(id);
+            io.to(id).emit('LAUNCHGAME');
+            break;
+          }
         }
       }
     }
+
+
   });
 
-
-
+  socket.on('disconnect', function(){
+    debugio('User disconnected');
+  });
 
 });
 

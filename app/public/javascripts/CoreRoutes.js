@@ -1,4 +1,4 @@
-angular.module('spaceraiders.routes', [])
+angular.module('core.routes', [])
     .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
 
         $urlRouterProvider.otherwise("/");
@@ -7,12 +7,12 @@ angular.module('spaceraiders.routes', [])
             .state('login', {
                 url: '/',
                 templateUrl: 'templates/login.html',
-                controller: 'spaceraiderController'
+                controller: 'coreController'
             })
             .state('game', {
                 url: '/',
                 templateUrl: 'templates/game.html',
-                controller: 'spaceraiderController'
+                controller: 'coreController'
             });
 
     }]);
