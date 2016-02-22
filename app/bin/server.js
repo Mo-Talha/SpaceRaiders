@@ -30,14 +30,12 @@ io.on('connection', function(socket){
           if (lenRooms === 1){
             debugio('Random opponent found with socket id: ' + id);
             socket.join(id);
-            io.to(id).emit('LAUNCHGAME');
+            io.to(id).emit('LAUNCHGAME', {alien: id, spaceship: socket.id});
             break;
           }
         }
       }
     }
-
-
   });
 
   socket.on('disconnect', function(){
