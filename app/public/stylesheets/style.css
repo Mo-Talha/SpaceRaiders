@@ -71,21 +71,13 @@ html {
   position: absolute;
   width:100px;
   height:140px;
-  top: 75%;
+  top: 77%;
   right: 50%;
 }
 
 #spaceshipHealthBar {
   position: absolute;
-  top: 75%;
-}
-
-.rotate {
-  transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -webkit-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
+  top: 76%;
 }
 
 @keyframes animStar {

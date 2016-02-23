@@ -20,9 +20,7 @@ io.on('connection', function(socket){
     debugio('Creating new random user with socket id: ' + socket.id);
     socket.userId = socket.id;
     debugio('Searching for random opponent for user');
-
     var sockets = io.sockets.sockets;
-
     for (var id in sockets){
       if (sockets.hasOwnProperty(id) && sockets[id].hasOwnProperty('userId')){
         if (id !== socket.id){
@@ -30,12 +28,16 @@ io.on('connection', function(socket){
           if (lenRooms === 1){
             debugio('Random opponent found with socket id: ' + id);
             socket.join(id);
-            io.to(id).emit('LAUNCHGAME', {alien: id, spaceship: socket.id});
+            io.to(id).emit('LAUNCHGAME', {roomId: id, alien: id, spaceship: socket.id});
             break;
           }
         }
       }
     }
+  });
+
+  socket.on('PLAYERMOVEMENT', function(id, data){
+    socket.broadcast.to(id).emit('PLAYERMOVEMENT', data);
   });
 
   socket.on('disconnect', function(){

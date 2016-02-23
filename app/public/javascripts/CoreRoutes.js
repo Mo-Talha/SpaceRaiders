@@ -12,7 +12,8 @@ angular.module('core.routes', [])
             .state('game', {
                 url: '/',
                 templateUrl: 'templates/game.html',
-                controller: 'coreController'
+                controller: 'gameController',
+                params: {roomId: '', player: ''}
             });
 
     }]);
