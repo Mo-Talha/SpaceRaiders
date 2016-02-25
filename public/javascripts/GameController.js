@@ -16,23 +16,24 @@ angular.module('game.controller', [])
 
                 $(document).keydown(function(e) {
                     var angle = $(imageId).getRotateAngle()[0];
-                    if (!angle) angle = 0;
+                    if (isNaN(angle)) angle = 0;
                     switch(e.which) {
                         case 65:
                             //A
-                            $(imageId).rotate({animateTo:(angle - 45)});
-                            coreServices.socket().emit('PLAYERROTATE', roomId, {
-                                degree: -45
-                            });
-                            break;
-                        case 68:
-                            //D
-                            $(imageId).rotate({animateTo:(angle + 45)});
+                            $(imageId).rotate(angle - 45);
                             coreServices.socket().emit('PLAYERROTATE', roomId, {
                                 degree: 45
                             });
                             break;
+                        case 68:
+                            //D
+                            $(imageId).rotate(angle + 45);
+                            coreServices.socket().emit('PLAYERROTATE', roomId, {
+                                degree: -45
+                            });
+                            break;
                         default:
+                            e.preventDefault();
                             return;
                     }
                 });
@@ -54,8 +55,13 @@ angular.module('game.controller', [])
 
                 coreServices.socket().on('PLAYERROTATE', function(data){
                     var opponentImageId = '#' + opponent;
-                    var angle = data.degree + $(opponentImageId).getRotateAngle()[0];
-                    $(opponentImageId).rotate({animateTo:(angle)});
+                    var currentAngle = $(opponentImageId).getRotateAngle()[0];
+                    if (isNaN(currentAngle)) currentAngle = 0;
+                    var angle = data.degree + currentAngle;
+                    if (opponent === 'alien'){
+                        console.log(data.degree + " + " + currentAngle)
+                    }
+                    $(opponentImageId).rotate(angle);
                 });
 
 
