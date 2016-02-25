@@ -40,6 +40,10 @@ io.on('connection', function(socket){
     socket.broadcast.to(id).emit('PLAYERMOVEMENT', data);
   });
 
+  socket.on('PLAYERROTATE', function(id, data){
+    socket.broadcast.to(id).emit('PLAYERROTATE', data);
+  });
+
   socket.on('disconnect', function(){
     debugio('User disconnected');
   });

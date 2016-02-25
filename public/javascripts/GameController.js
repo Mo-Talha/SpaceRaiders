@@ -21,10 +21,16 @@ angular.module('game.controller', [])
                         case 65:
                             //A
                             $(imageId).rotate({animateTo:(angle - 45)});
+                            coreServices.socket().emit('PLAYERROTATE', roomId, {
+                                degree: -45
+                            });
                             break;
                         case 68:
                             //D
                             $(imageId).rotate({animateTo:(angle + 45)});
+                            coreServices.socket().emit('PLAYERROTATE', roomId, {
+                                degree: 45
+                            });
                             break;
                         default:
                             return;
@@ -34,20 +40,27 @@ angular.module('game.controller', [])
                 $(window).mousemove(function(event) {
                     $(imageId).css({"left" : event.pageX - 50, "top": event.pageY - 70});
                     coreServices.socket().emit('PLAYERMOVEMENT', roomId, {
-                        x: $(imageId).position().left,
-                        y: $(imageId).position().top
+                        x: event.pageX,
+                        y: event.pageY
                     });
                 });
 
                 coreServices.socket().on('PLAYERMOVEMENT', function(data){
                     var opponentImageId = '#' + opponent;
-                    $(opponentImageId).css({"left" : data.x, "top": data.y});
+                    var x = data.x - 50;
+                    var y = $(window).height() - data.y - 70;
+                    $(opponentImageId).css({"left" : x, "top": y});
                 });
 
+                coreServices.socket().on('PLAYERROTATE', function(data){
+                    var opponentImageId = '#' + opponent;
+                    var angle = data.degree + $(opponentImageId).getRotateAngle()[0];
+                    $(opponentImageId).rotate({animateTo:(angle)});
+                });
+
+
+
+
             });
-
-
-
-
 
         }]);
