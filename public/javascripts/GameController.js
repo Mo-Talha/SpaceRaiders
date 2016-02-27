@@ -38,6 +38,18 @@ angular.module('game.controller', [])
                     }
                 });
 
+                $(document).click(function(event){
+                    if (player === 'alien'){
+                        var alienLaser = $('<div class="laser-beam purple"></div>');
+                        $("#alienPlayer").append(alienLaser);
+                        animateLaser(alienLaser, event.pageX - 1, event.pageY - 50, 1000);
+                    } else if (player === 'spaceship'){
+                        var spaceshipLaser = $('<div class="laser-beam red"></div>');
+                        $("#spaceshipPlayer").append(spaceshipLaser);
+                        animateLaser(spaceshipLaser, event.pageX - 1, event.pageY - 65, 1000);
+                    }
+                });
+
                 $(window).mousemove(function(event) {
                     $(imageId).css({"left" : event.pageX - 50, "top": event.pageY - 70});
                     coreServices.socket().emit('PLAYERMOVEMENT', roomId, {
@@ -58,13 +70,24 @@ angular.module('game.controller', [])
                     var currentAngle = $(opponentImageId).getRotateAngle()[0];
                     if (isNaN(currentAngle)) currentAngle = 0;
                     var angle = data.degree + currentAngle;
-                    if (opponent === 'alien'){
-                        console.log(data.degree + " + " + currentAngle)
-                    }
                     $(opponentImageId).rotate(angle);
                 });
 
-
+                var animateLaser = function(element, leftStart, topStart, speed){
+                    $(element).css({"left":leftStart, "top": topStart});
+                    $(element).animate(
+                        {
+                            "top": "+=-" + $(window).height() + "px"
+                        },
+                        {
+                            duration: speed,
+                            "easing": "linear",
+                            complete: function(){
+                                $(this).remove();
+                            }
+                        }
+                    );
+                };
 
 
             });
