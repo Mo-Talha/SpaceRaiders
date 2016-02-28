@@ -67,7 +67,14 @@ angular.module('game.controller', [])
                 });
 
                 coreServices.socket().on('PLAYERSHOOT', function(){
-
+                    var opponentImageId = "#" + opponent;
+                    var x = parseInt($(opponentImageId).css("left").replace("px", "")) + 50;
+                    var y = parseInt($(opponentImageId).css("top").replace("px", "")) + 70;
+                    var event = {
+                        pageX: x,
+                        pageY: y
+                    };
+                    shootLaser(opponent, event);
                 });
 
                 var shootLaser = function(player, event){
@@ -76,8 +83,6 @@ angular.module('game.controller', [])
                     if (isNaN(imageAngle)) imageAngle = 0;
                     if (imageAngle < 0) imageAngle += 360;
                     var laser = null;
-
-                    console.log(imageAngle);
 
                     if (player === 'alien'){
                         var alienLaser = $('<div class="laser-beam purple"></div>');
