@@ -42,71 +42,49 @@ angular.module('game.controller', [])
                     var imageId = '#' + player;
                     var imageAngle = $(imageId).getRotateAngle()[0];
                     if (isNaN(imageAngle)) imageAngle = 0;
+                    var laser = null;
+
                     if (player === 'alien'){
                         var alienLaser = $('<div class="laser-beam purple"></div>');
                         $(alienLaser).rotate(imageAngle);
                         $("#alienPlayer").append(alienLaser);
                         imageAngle -= 180;
                         while (imageAngle > 360) imageAngle = imageAngle - 360;
-                        if (Math.abs(imageAngle) === 0 || Math.abs(imageAngle) === 360){
-                            //Top
-                            animateLaser(alienLaser, 'TOP', event.pageX - 1, event.pageY - 50, 1000);
-                        } else if (Math.abs(imageAngle) > 0 && Math.abs(imageAngle) < 90){
-                            //Top right
-                            animateLaser(alienLaser, 'TOPRIGHT', event.pageX + 28, event.pageY - 45, 1000);
-                        } else if (Math.abs(imageAngle) === 90){
-                            //Right
-                            animateLaser(alienLaser, 'RIGHT', event.pageX + 28, event.pageY - 15, 1000);
-                        } else if (Math.abs(imageAngle) > 90 && Math.abs(imageAngle) < 180){
-                            //Bottom right
-                            animateLaser(alienLaser, 'BOTTOMRIGHT', event.pageX + 28, event.pageY + 15, 1000);
-                        } else if (Math.abs(imageAngle) === 180){
-                            //Bottom
-                            animateLaser(alienLaser, 'BOTTOM', event.pageX - 1, event.pageY + 15, 1000);
-                        } else if (Math.abs(imageAngle) > 180 && Math.abs(imageAngle) < 270){
-                            //Bottom left
-                            animateLaser(alienLaser, 'BOTTOMLEFT', event.pageX - 28, event.pageY + 15, 1000);
-                        } else if (Math.abs(imageAngle) === 270){
-                            //Left
-                            animateLaser(alienLaser, 'LEFT', event.pageX - 28, event.pageY - 15, 1000);
-                        } else if (Math.abs(imageAngle) > 270 && Math.abs(imageAngle) < 360){
-                            //Top left
-                            animateLaser(alienLaser, 'TOPLEFT', event.pageX - 28, event.pageY - 45, 1000);
-                        } else {
-                            console.log("Error. Cannot find correct ship position.");
-                        }
+                        laser = alienLaser;
                     } else if (player === 'spaceship'){
                         var spaceshipLaser = $('<div class="laser-beam red"></div>');
                         $(spaceshipLaser).rotate(imageAngle);
                         $("#spaceshipPlayer").append(spaceshipLaser);
                         while (imageAngle > 360) imageAngle = imageAngle - 360;
-                        if (Math.abs(imageAngle) === 0 || Math.abs(imageAngle) === 360){
-                            //Top
-                            animateLaser(spaceshipLaser, 'TOP', event.pageX - 1, event.pageY - 50, 1000);
-                        } else if (Math.abs(imageAngle) > 0 && Math.abs(imageAngle) < 90){
-                            //Top right
-                            animateLaser(spaceshipLaser, 'TOPRIGHT', event.pageX + 28, event.pageY - 45, 1000);
-                        } else if (Math.abs(imageAngle) === 90){
-                            //Right
-                            animateLaser(spaceshipLaser, 'RIGHT', event.pageX + 28, event.pageY - 15, 1000);
-                        } else if (Math.abs(imageAngle) > 90 && Math.abs(imageAngle) < 180){
-                            //Bottom right
-                            animateLaser(spaceshipLaser, 'BOTTOMRIGHT', event.pageX + 28, event.pageY + 15, 1000);
-                        } else if (Math.abs(imageAngle) === 180){
-                            //Bottom
-                            animateLaser(spaceshipLaser, 'BOTTOM', event.pageX - 1, event.pageY + 15, 1000);
-                        } else if (Math.abs(imageAngle) > 180 && Math.abs(imageAngle) < 270){
-                            //Bottom left
-                            animateLaser(spaceshipLaser, 'BOTTOMLEFT', event.pageX - 28, event.pageY + 15, 1000);
-                        } else if (Math.abs(imageAngle) === 270){
-                            //Left
-                            animateLaser(spaceshipLaser, 'LEFT', event.pageX - 28, event.pageY - 15, 1000);
-                        } else if (Math.abs(imageAngle) > 270 && Math.abs(imageAngle) < 360){
-                            //Top left
-                            animateLaser(spaceshipLaser, 'TOPLEFT', event.pageX - 28, event.pageY - 45, 1000);
-                        } else {
-                            console.log("Error. Cannot find correct ship position.");
-                        }
+                        laser = spaceshipLaser;
+                    }
+
+                    if (Math.abs(imageAngle) === 0 || Math.abs(imageAngle) === 360){
+                        //Top
+                        animateLaser(laser, 'TOP', event.pageX - 1, event.pageY - 50, 1000);
+                    } else if (Math.abs(imageAngle) > 0 && Math.abs(imageAngle) < 90){
+                        //Top right
+                        animateLaser(laser, 'TOPRIGHT', event.pageX + 28, event.pageY - 45, 1000);
+                    } else if (Math.abs(imageAngle) === 90){
+                        //Right
+                        animateLaser(laser, 'RIGHT', event.pageX + 28, event.pageY - 15, 1000);
+                    } else if (Math.abs(imageAngle) > 90 && Math.abs(imageAngle) < 180){
+                        //Bottom right
+                        animateLaser(laser, 'BOTTOMRIGHT', event.pageX + 28, event.pageY + 15, 1000);
+                    } else if (Math.abs(imageAngle) === 180){
+                        //Bottom
+                        animateLaser(laser, 'BOTTOM', event.pageX - 1, event.pageY + 15, 1000);
+                    } else if (Math.abs(imageAngle) > 180 && Math.abs(imageAngle) < 270){
+                        //Bottom left
+                        animateLaser(laser, 'BOTTOMLEFT', event.pageX - 28, event.pageY + 15, 1000);
+                    } else if (Math.abs(imageAngle) === 270){
+                        //Left
+                        animateLaser(laser, 'LEFT', event.pageX - 28, event.pageY - 15, 1000);
+                    } else if (Math.abs(imageAngle) > 270 && Math.abs(imageAngle) < 360){
+                        //Top left
+                        animateLaser(laser, 'TOPLEFT', event.pageX - 28, event.pageY - 45, 1000);
+                    } else {
+                        console.log("Error. Cannot find correct ship position.");
                     }
                 });
 
