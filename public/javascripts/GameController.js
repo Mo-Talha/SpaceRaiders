@@ -39,14 +39,74 @@ angular.module('game.controller', [])
                 });
 
                 $(document).click(function(event){
+                    var imageId = '#' + player;
+                    var imageAngle = $(imageId).getRotateAngle()[0];
+                    if (isNaN(imageAngle)) imageAngle = 0;
                     if (player === 'alien'){
                         var alienLaser = $('<div class="laser-beam purple"></div>');
+                        $(alienLaser).rotate(imageAngle);
                         $("#alienPlayer").append(alienLaser);
-                        animateLaser(alienLaser, event.pageX - 1, event.pageY - 50, 1000);
+                        imageAngle -= 180;
+                        while (imageAngle > 360) imageAngle = imageAngle - 360;
+                        if (Math.abs(imageAngle) === 0 || Math.abs(imageAngle) === 360){
+                            //Top
+                            animateLaser(alienLaser, 'TOP', event.pageX - 1, event.pageY - 50, 1000);
+                        } else if (Math.abs(imageAngle) > 0 && Math.abs(imageAngle) < 90){
+                            //Top right
+                            animateLaser(alienLaser, 'TOPRIGHT', event.pageX + 28, event.pageY - 45, 1000);
+                        } else if (Math.abs(imageAngle) === 90){
+                            //Right
+                            animateLaser(alienLaser, 'RIGHT', event.pageX + 28, event.pageY - 15, 1000);
+                        } else if (Math.abs(imageAngle) > 90 && Math.abs(imageAngle) < 180){
+                            //Bottom right
+                            animateLaser(alienLaser, 'BOTTOMRIGHT', event.pageX + 28, event.pageY + 15, 1000);
+                        } else if (Math.abs(imageAngle) === 180){
+                            //Bottom
+                            animateLaser(alienLaser, 'BOTTOM', event.pageX - 1, event.pageY + 15, 1000);
+                        } else if (Math.abs(imageAngle) > 180 && Math.abs(imageAngle) < 270){
+                            //Bottom left
+                            animateLaser(alienLaser, 'BOTTOMLEFT', event.pageX - 28, event.pageY + 15, 1000);
+                        } else if (Math.abs(imageAngle) === 270){
+                            //Left
+                            animateLaser(alienLaser, 'LEFT', event.pageX - 28, event.pageY - 15, 1000);
+                        } else if (Math.abs(imageAngle) > 270 && Math.abs(imageAngle) < 360){
+                            //Top left
+                            animateLaser(alienLaser, 'TOPLEFT', event.pageX - 28, event.pageY - 45, 1000);
+                        } else {
+                            console.log("Error. Cannot find correct ship position.");
+                        }
                     } else if (player === 'spaceship'){
                         var spaceshipLaser = $('<div class="laser-beam red"></div>');
+                        $(spaceshipLaser).rotate(imageAngle);
                         $("#spaceshipPlayer").append(spaceshipLaser);
-                        animateLaser(spaceshipLaser, event.pageX - 1, event.pageY - 65, 1000);
+                        while (imageAngle > 360) imageAngle = imageAngle - 360;
+                        if (Math.abs(imageAngle) === 0 || Math.abs(imageAngle) === 360){
+                            //Top
+                            animateLaser(spaceshipLaser, 'TOP', event.pageX - 1, event.pageY - 50, 1000);
+                        } else if (Math.abs(imageAngle) > 0 && Math.abs(imageAngle) < 90){
+                            //Top right
+                            animateLaser(spaceshipLaser, 'TOPRIGHT', event.pageX + 28, event.pageY - 45, 1000);
+                        } else if (Math.abs(imageAngle) === 90){
+                            //Right
+                            animateLaser(spaceshipLaser, 'RIGHT', event.pageX + 28, event.pageY - 15, 1000);
+                        } else if (Math.abs(imageAngle) > 90 && Math.abs(imageAngle) < 180){
+                            //Bottom right
+                            animateLaser(spaceshipLaser, 'BOTTOMRIGHT', event.pageX + 28, event.pageY + 15, 1000);
+                        } else if (Math.abs(imageAngle) === 180){
+                            //Bottom
+                            animateLaser(spaceshipLaser, 'BOTTOM', event.pageX - 1, event.pageY + 15, 1000);
+                        } else if (Math.abs(imageAngle) > 180 && Math.abs(imageAngle) < 270){
+                            //Bottom left
+                            animateLaser(spaceshipLaser, 'BOTTOMLEFT', event.pageX - 28, event.pageY + 15, 1000);
+                        } else if (Math.abs(imageAngle) === 270){
+                            //Left
+                            animateLaser(spaceshipLaser, 'LEFT', event.pageX - 28, event.pageY - 15, 1000);
+                        } else if (Math.abs(imageAngle) > 270 && Math.abs(imageAngle) < 360){
+                            //Top left
+                            animateLaser(spaceshipLaser, 'TOPLEFT', event.pageX - 28, event.pageY - 45, 1000);
+                        } else {
+                            console.log("Error. Cannot find correct ship position.");
+                        }
                     }
                 });
 
@@ -73,20 +133,117 @@ angular.module('game.controller', [])
                     $(opponentImageId).rotate(angle);
                 });
 
-                var animateLaser = function(element, leftStart, topStart, speed){
+                var animateLaser = function(element, position, leftStart, topStart, speed){
                     $(element).css({"left":leftStart, "top": topStart});
-                    $(element).animate(
-                        {
-                            "top": "+=-" + $(window).height() + "px"
-                        },
-                        {
-                            duration: speed,
-                            "easing": "linear",
-                            complete: function(){
-                                $(this).remove();
+                    if (position === 'TOP'){
+                        $(element).animate(
+                            {
+                                "top": "-=" + $(window).height() + "px"
+                            },
+                            {
+                                duration: speed,
+                                "easing": "linear",
+                                complete: function(){
+                                    $(this).remove();
+                                }
                             }
-                        }
-                    );
+                        );
+                    } else if (position === 'TOPRIGHT'){
+                        $(element).animate(
+                            {
+                                "top": "-=" + $(window).height() + "px",
+                                "left": "+=" + $(window).width() + "px"
+                            },
+                            {
+                                duration: speed,
+                                "easing": "linear",
+                                complete: function(){
+                                    $(this).remove();
+                                }
+                            }
+                        );
+                    } else if (position === 'RIGHT'){
+                        $(element).animate(
+                            {
+                                "left": "+=" + $(window).width() + "px"
+                            },
+                            {
+                                duration: speed,
+                                "easing": "linear",
+                                complete: function(){
+                                    $(this).remove();
+                                }
+                            }
+                        );
+                    } else if (position === 'BOTTOMRIGHT'){
+                        $(element).animate(
+                            {
+                                "top": "+=" + $(window).height() + "px",
+                                "left": "+=" + $(window).width() + "px"
+                            },
+                            {
+                                duration: speed,
+                                "easing": "linear",
+                                complete: function(){
+                                    $(this).remove();
+                                }
+                            }
+                        );
+                    } else if (position === 'BOTTOM'){
+                        $(element).animate(
+                            {
+                                "top": "+=" + $(window).height() + "px"
+                            },
+                            {
+                                duration: speed,
+                                "easing": "linear",
+                                complete: function(){
+                                    $(this).remove();
+                                }
+                            }
+                        );
+                    } else if (position === 'BOTTOMLEFT'){
+                        $(element).animate(
+                            {
+                                "top": "+=" + $(window).height() + "px",
+                                "left": "-=" + $(window).width() + "px"
+                            },
+                            {
+                                duration: speed,
+                                "easing": "linear",
+                                complete: function(){
+                                    $(this).remove();
+                                }
+                            }
+                        );
+                    } else if (position === 'LEFT'){
+                        $(element).animate(
+                            {
+                                "left": "-=" + $(window).width() + "px"
+                            },
+                            {
+                                duration: speed,
+                                "easing": "linear",
+                                complete: function(){
+                                    $(this).remove();
+                                }
+                            }
+                        );
+                    } else if (position === 'TOPLEFT'){
+                        $(element).animate(
+                            {
+                                "top": "-=" + $(window).height() + "px",
+                                "left": "-=" + $(window).width() + "px"
+                            },
+                            {
+                                duration: speed,
+                                "easing": "linear",
+                                complete: function(){
+                                    $(this).remove();
+                                }
+                            }
+                        );
+                    }
                 };
 
 
