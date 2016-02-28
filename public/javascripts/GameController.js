@@ -39,16 +39,52 @@ angular.module('game.controller', [])
                 });
 
                 $(document).click(function(event){
+                    shootLaser(player, event);
+                    coreServices.socket().emit('PLAYERSHOOT', roomId);
+                });
+
+                $(window).mousemove(function(event) {
+                    $(imageId).css({"left" : event.pageX - 50, "top": event.pageY - 70});
+                    coreServices.socket().emit('PLAYERMOVEMENT', roomId, {
+                        x: event.pageX,
+                        y: event.pageY
+                    });
+                });
+
+                coreServices.socket().on('PLAYERMOVEMENT', function(data){
+                    var opponentImageId = '#' + opponent;
+                    var x = data.x - 50;
+                    var y = $(window).height() - data.y - 70;
+                    $(opponentImageId).css({"left" : x, "top": y});
+                });
+
+                coreServices.socket().on('PLAYERROTATE', function(data){
+                    var opponentImageId = '#' + opponent;
+                    var currentAngle = $(opponentImageId).getRotateAngle()[0];
+                    if (isNaN(currentAngle)) currentAngle = 0;
+                    var angle = data.degree + currentAngle;
+                    $(opponentImageId).rotate(angle);
+                });
+
+                coreServices.socket().on('PLAYERSHOOT', function(){
+
+                });
+
+                var shootLaser = function(player, event){
                     var imageId = '#' + player;
                     var imageAngle = $(imageId).getRotateAngle()[0];
                     if (isNaN(imageAngle)) imageAngle = 0;
+                    if (imageAngle < 0) imageAngle += 360;
                     var laser = null;
+
+                    console.log(imageAngle);
 
                     if (player === 'alien'){
                         var alienLaser = $('<div class="laser-beam purple"></div>');
                         $(alienLaser).rotate(imageAngle);
                         $("#alienPlayer").append(alienLaser);
-                        imageAngle -= 180;
+                        if (imageAngle > 180) imageAngle -= 180;
+                            else imageAngle += 180;
                         while (imageAngle > 360) imageAngle = imageAngle - 360;
                         laser = alienLaser;
                     } else if (player === 'spaceship'){
@@ -86,30 +122,7 @@ angular.module('game.controller', [])
                     } else {
                         console.log("Error. Cannot find correct ship position.");
                     }
-                });
-
-                $(window).mousemove(function(event) {
-                    $(imageId).css({"left" : event.pageX - 50, "top": event.pageY - 70});
-                    coreServices.socket().emit('PLAYERMOVEMENT', roomId, {
-                        x: event.pageX,
-                        y: event.pageY
-                    });
-                });
-
-                coreServices.socket().on('PLAYERMOVEMENT', function(data){
-                    var opponentImageId = '#' + opponent;
-                    var x = data.x - 50;
-                    var y = $(window).height() - data.y - 70;
-                    $(opponentImageId).css({"left" : x, "top": y});
-                });
-
-                coreServices.socket().on('PLAYERROTATE', function(data){
-                    var opponentImageId = '#' + opponent;
-                    var currentAngle = $(opponentImageId).getRotateAngle()[0];
-                    if (isNaN(currentAngle)) currentAngle = 0;
-                    var angle = data.degree + currentAngle;
-                    $(opponentImageId).rotate(angle);
-                });
+                };
 
                 var animateLaser = function(element, position, leftStart, topStart, speed){
                     $(element).css({"left":leftStart, "top": topStart});
