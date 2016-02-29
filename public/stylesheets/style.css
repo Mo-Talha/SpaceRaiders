@@ -4,6 +4,12 @@ html {
   overflow: hidden;
 }
 
+.background {
+  width: 1px;
+  height: 1px;
+  background: transparent;
+}
+
 #stars {
   width: 1px;
   height: 1px;
@@ -74,7 +80,14 @@ html {
 
 #alienHealthBar {
   position: absolute;
-  right: 0.01%;
+}
+
+#alienHealth {
+  position: absolute;
+  background: rgba(204, 102, 255, 0.6);
+  -webkit-box-shadow: 0px 0px 15px 0px #cc66ff;
+  -moz-box-shadow: 0px 0px 15px 0px #cc66ff;
+  box-shadow: 0px 0px 15px 0px #cc66ff;
 }
 
 #spaceship {
@@ -87,7 +100,14 @@ html {
 
 #spaceshipHealthBar {
   position: absolute;
-  top: 76%;
+}
+
+#spaceshipHealth {
+  position: absolute;
+  background: rgba(236, 19, 65, 0.6);
+  -webkit-box-shadow: 0px 0px 15px 0px #ec1341;
+  -moz-box-shadow: 0px 0px 15px 0px #ec1341;
+  box-shadow: 0px 0px 15px 0px #ec1341;
 }
 
 .laser-beam {
