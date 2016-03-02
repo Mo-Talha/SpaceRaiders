@@ -86,6 +86,12 @@ angular.module('game.controller', [])
                     shootLaser(opponent, event, false);
                 });
 
+                coreServices.socket().on('PLAYERHIT', function(){
+                    var healthBar = "#" + player + "Health";
+                    var y = parseInt($(healthBar).css('height').replace('px', '')) - 15;
+                    $(healthBar).css('height', y);
+                });
+
                 var shootLaser = function(player, event, checkCollision){
                     var imageId = '#' + player;
                     var imageAngle = $(imageId).getRotateAngle()[0];
@@ -327,7 +333,19 @@ angular.module('game.controller', [])
                     if (hit) {
                         $(element).stop();
                         $(element).remove();
-                        console.log("HIT");
+                        var healthBar = imageId + "Health";
+                        var y = parseInt($(healthBar).css('height').replace('px', '')) - 15;
+                        $(healthBar).css('height', y);
+                        coreServices.socket().emit('PLAYERHIT', roomId);
+
+                        if (y <= 0){
+                            $state.go('login');
+                            $state.go('login', {message: 'You lost :('});
+                        }
+
+                        if (parseInt($("#" + opponent + "Health").css('height').replace('px', '')) <= 0){
+                            $state.go('login', {message: 'You won :)'});
+                        }
                     }
                 }
 

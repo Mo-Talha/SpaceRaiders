@@ -48,6 +48,10 @@ io.on('connection', function(socket){
     socket.broadcast.to(id).emit('PLAYERSHOOT');
   });
 
+  socket.on('PLAYERHIT', function(id){
+    socket.broadcast.to(id).emit('PLAYERHIT');
+  });
+
   socket.on('disconnect', function(){
     debugio('User disconnected');
   });
