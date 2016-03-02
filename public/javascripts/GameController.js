@@ -11,13 +11,13 @@ angular.module('game.controller', [])
                 $("#spaceship").css("top", "1%").rotate(180);
                 $("#alienHealthBar").css('top', '76%').rotate(180);
                 $("#spaceshipHealthBar").css('right', '0.01%').rotate(180);
-                $("#alienHealth").css({"top": "80%", "left":"1.75%", "height": '101px', "width": '19px'});
-                $("#spaceshipHealth").css({"top": "4.25%", "right":"1.75%", "height": '101px', "width": '19px'});
+                $("#alienHealth").css({"top": "80%", "left":"10px", "height": '101px', "width": '19px'});
+                $("#spaceshipHealth").css({"top": "4.25%", "right":"10px", "height": '101px', "width": '19px'});
             } else if (player === 'spaceship'){
                 $("#alienHealthBar").css('right', '0.01%');
                 $("#spaceshipHealthBar").css('top', '76%');
-                $("#spaceshipHealth").css({"top": "80%", "left":"1.75%", "height": '101px', "width": '19px'});
-                $("#alienHealth").css({"top": "4.25%", "right":"1.75%", "height": '101px', "width": '19px'});
+                $("#spaceshipHealth").css({"top": "80%", "left":"10px", "height": '101px', "width": '19px'});
+                $("#alienHealth").css({"top": "4.25%", "right":"10px", "height": '101px', "width": '19px'});
             }
 
             $(document).ready(function(){
