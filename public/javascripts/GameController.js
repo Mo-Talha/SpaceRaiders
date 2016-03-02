@@ -47,17 +47,17 @@ angular.module('game.controller', [])
                     }
                 });
 
-                $(document).click(function(event){
-                    shootLaser(player, event);
-                    coreServices.socket().emit('PLAYERSHOOT', roomId);
-                });
-
                 $(window).mousemove(function(event) {
                     $(imageId).css({"left" : event.pageX - 50, "top": event.pageY - 70});
                     coreServices.socket().emit('PLAYERMOVEMENT', roomId, {
                         x: event.pageX,
                         y: event.pageY
                     });
+                });
+
+                $(document).click(function(event){
+                    shootLaser(player, event, true);
+                    coreServices.socket().emit('PLAYERSHOOT', roomId);
                 });
 
                 coreServices.socket().on('PLAYERMOVEMENT', function(data){
@@ -83,10 +83,10 @@ angular.module('game.controller', [])
                         pageX: x,
                         pageY: y
                     };
-                    shootLaser(opponent, event);
+                    shootLaser(opponent, event, false);
                 });
 
-                var shootLaser = function(player, event){
+                var shootLaser = function(player, event, checkCollision){
                     var imageId = '#' + player;
                     var imageAngle = $(imageId).getRotateAngle()[0];
                     if (isNaN(imageAngle)) imageAngle = 0;
@@ -111,34 +111,34 @@ angular.module('game.controller', [])
 
                     if (Math.abs(imageAngle) === 0 || Math.abs(imageAngle) === 360){
                         //Top
-                        animateLaser(laser, 'TOP', event.pageX - 1, event.pageY - 50, 1000);
+                        animateLaser(laser, 'TOP', checkCollision, event.pageX - 1, event.pageY - 50, 1000);
                     } else if (Math.abs(imageAngle) > 0 && Math.abs(imageAngle) < 90){
                         //Top right
-                        animateLaser(laser, 'TOPRIGHT', event.pageX + 28, event.pageY - 45, 1000);
+                        animateLaser(laser, 'TOPRIGHT', checkCollision, event.pageX + 28, event.pageY - 45, 1000);
                     } else if (Math.abs(imageAngle) === 90){
                         //Right
-                        animateLaser(laser, 'RIGHT', event.pageX + 28, event.pageY - 15, 1000);
+                        animateLaser(laser, 'RIGHT', checkCollision, event.pageX + 28, event.pageY - 15, 1000);
                     } else if (Math.abs(imageAngle) > 90 && Math.abs(imageAngle) < 180){
                         //Bottom right
-                        animateLaser(laser, 'BOTTOMRIGHT', event.pageX + 28, event.pageY + 15, 1000);
+                        animateLaser(laser, 'BOTTOMRIGHT', checkCollision, event.pageX + 28, event.pageY + 15, 1000);
                     } else if (Math.abs(imageAngle) === 180){
                         //Bottom
-                        animateLaser(laser, 'BOTTOM', event.pageX - 1, event.pageY + 15, 1000);
+                        animateLaser(laser, 'BOTTOM', checkCollision, event.pageX - 1, event.pageY + 15, 1000);
                     } else if (Math.abs(imageAngle) > 180 && Math.abs(imageAngle) < 270){
                         //Bottom left
-                        animateLaser(laser, 'BOTTOMLEFT', event.pageX - 28, event.pageY + 15, 1000);
+                        animateLaser(laser, 'BOTTOMLEFT', checkCollision, event.pageX - 28, event.pageY + 15, 1000);
                     } else if (Math.abs(imageAngle) === 270){
                         //Left
-                        animateLaser(laser, 'LEFT', event.pageX - 28, event.pageY - 15, 1000);
+                        animateLaser(laser, 'LEFT', checkCollision, event.pageX - 28, event.pageY - 15, 1000);
                     } else if (Math.abs(imageAngle) > 270 && Math.abs(imageAngle) < 360){
                         //Top left
-                        animateLaser(laser, 'TOPLEFT', event.pageX - 28, event.pageY - 45, 1000);
+                        animateLaser(laser, 'TOPLEFT', checkCollision, event.pageX - 28, event.pageY - 45, 1000);
                     } else {
                         console.log("Error. Cannot find correct ship position.");
                     }
                 };
 
-                var animateLaser = function(element, position, leftStart, topStart, speed){
+                var animateLaser = function(element, position, checkCollision, leftStart, topStart, speed){
                     $(element).css({"left":leftStart, "top": topStart});
                     if (position === 'TOP'){
                         $(element).animate(
@@ -148,6 +148,11 @@ angular.module('game.controller', [])
                             {
                                 duration: speed,
                                 "easing": "linear",
+                                step: function(){
+                                    if (checkCollision){
+                                        checkCollisions(element);
+                                    }
+                                },
                                 complete: function(){
                                     $(this).remove();
                                 }
@@ -162,6 +167,11 @@ angular.module('game.controller', [])
                             {
                                 duration: speed,
                                 "easing": "linear",
+                                step: function(){
+                                    if (checkCollision){
+                                        checkCollisions(element);
+                                    }
+                                },
                                 complete: function(){
                                     $(this).remove();
                                 }
@@ -175,6 +185,11 @@ angular.module('game.controller', [])
                             {
                                 duration: speed,
                                 "easing": "linear",
+                                step: function(){
+                                    if (checkCollision){
+                                        checkCollisions(element);
+                                    }
+                                },
                                 complete: function(){
                                     $(this).remove();
                                 }
@@ -189,6 +204,11 @@ angular.module('game.controller', [])
                             {
                                 duration: speed,
                                 "easing": "linear",
+                                step: function(){
+                                    if (checkCollision){
+                                        checkCollisions(element);
+                                    }
+                                },
                                 complete: function(){
                                     $(this).remove();
                                 }
@@ -202,6 +222,11 @@ angular.module('game.controller', [])
                             {
                                 duration: speed,
                                 "easing": "linear",
+                                step: function(){
+                                    if (checkCollision){
+                                        checkCollisions(element);
+                                    }
+                                },
                                 complete: function(){
                                     $(this).remove();
                                 }
@@ -216,6 +241,11 @@ angular.module('game.controller', [])
                             {
                                 duration: speed,
                                 "easing": "linear",
+                                step: function(){
+                                    if (checkCollision){
+                                        checkCollisions(element);
+                                    }
+                                },
                                 complete: function(){
                                     $(this).remove();
                                 }
@@ -229,6 +259,11 @@ angular.module('game.controller', [])
                             {
                                 duration: speed,
                                 "easing": "linear",
+                                step: function(){
+                                    if (checkCollision){
+                                        checkCollisions(element);
+                                    }
+                                },
                                 complete: function(){
                                     $(this).remove();
                                 }
@@ -243,6 +278,11 @@ angular.module('game.controller', [])
                             {
                                 duration: speed,
                                 "easing": "linear",
+                                step: function(){
+                                    if (checkCollision){
+                                        checkCollisions(element);
+                                    }
+                                },
                                 complete: function(){
                                     $(this).remove();
                                 }
@@ -250,6 +290,46 @@ angular.module('game.controller', [])
                         );
                     }
                 };
+
+                function getPosition(element) {
+                    var position = $(element).position();
+                    var width = $(element).width();
+                    var height = $(element).height();
+                    return {
+                        x: [
+                            position.left,
+                            position.left + width
+                        ],
+                        y: [
+                            position.top,
+                            position.top + height
+                        ]
+                    };
+                }
+
+                function comparePositions(coordinate1, coordinate2) {
+                    //Left most coordinate
+                    var x1 = coordinate1[0] < coordinate2[0] ? coordinate1 : coordinate2;
+                    var x2 = coordinate1[0] < coordinate2[0] ? coordinate2 : coordinate1;
+                    return (x1[1] > x2[0] || x1[0] === x2[0]);
+                }
+
+                var checkCollisions = function (element){
+                    var laser = element;
+                    var imageId = "#" + opponent;
+
+                    var laserPosition = getPosition(laser);
+                    var imagePosition = getPosition(imageId);
+
+                    var horizontalMatch = comparePositions(laserPosition.x, imagePosition.x);
+                    var verticalMatch = comparePositions(laserPosition.y, imagePosition.y);
+                    var hit = horizontalMatch && verticalMatch;
+                    if (hit) {
+                        $(element).stop();
+                        $(element).remove();
+                        console.log("HIT");
+                    }
+                }
 
             });
 
