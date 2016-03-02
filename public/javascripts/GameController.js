@@ -2,41 +2,46 @@ angular.module('game.controller', [])
     .controller('gameController', ['$scope', '$state', 'coreServices',
         function ($scope, $state, coreServices) {
 
+            var roomId = $state.params.roomId;
             var player = $state.params.player;
             var opponent = player === 'alien' ? 'spaceship': 'alien';
-            var roomId = $state.params.roomId;
+            var playerImageId = "#" + player;
+            var opponentImageId = "#" + opponent;
+            var playerHealthBar = "#" + player + "HealthBar";
+            var opponentHealthBar = "#" + opponent + "HealthBar";
+            var playerHealth = "#" + player + "Health";
+            var opponentHealth = "#" + opponent + "Health";
 
             if (player === 'alien'){
-                $("#alien").css("top", "77%").rotate(180);
-                $("#spaceship").css("top", "1%").rotate(180);
-                $("#alienHealthBar").css('top', '76%').rotate(180);
-                $("#spaceshipHealthBar").css('right', '0.01%').rotate(180);
-                $("#alienHealth").css({"top": "80%", "left":"10px", "height": '101px', "width": '19px'});
-                $("#spaceshipHealth").css({"top": "4.25%", "right":"10px", "height": '101px', "width": '19px'});
+                $(playerImageId).css("top", "77%").rotate(180);
+                $(opponentImageId).css("top", "1%").rotate(180);
+                $(playerHealthBar).css('top', '76%').rotate(180);
+                $(opponentHealthBar).css('right', '0.01%').rotate(180);
+                $(playerHealth).css({"top": "80%", "left":"10px", "height": '101px', "width": '19px'});
+                $(opponentHealth).css({"top": "4.25%", "right":"10px", "height": '101px', "width": '19px'});
             } else if (player === 'spaceship'){
-                $("#alienHealthBar").css('right', '0.01%');
-                $("#spaceshipHealthBar").css('top', '76%');
-                $("#spaceshipHealth").css({"top": "80%", "left":"10px", "height": '101px', "width": '19px'});
-                $("#alienHealth").css({"top": "4.25%", "right":"10px", "height": '101px', "width": '19px'});
+                $(playerHealthBar).css('right', '0.01%');
+                $(opponentHealthBar).css('top', '76%');
+                $(playerHealth).css({"top": "80%", "left":"10px", "height": '101px', "width": '19px'});
+                $(opponentHealth).css({"top": "4.25%", "right":"10px", "height": '101px', "width": '19px'});
             }
 
             $(document).ready(function(){
-                var imageId = '#' + player;
 
                 $(document).keydown(function(e) {
-                    var angle = $(imageId).getRotateAngle()[0];
+                    var angle = $(playerImageId).getRotateAngle()[0];
                     if (isNaN(angle)) angle = 0;
                     switch(e.which) {
                         case 65:
                             //A
-                            $(imageId).rotate(angle - 45);
+                            $(playerImageId).rotate(angle - 45);
                             coreServices.socket().emit('PLAYERROTATE', roomId, {
                                 degree: 45
                             });
                             break;
                         case 68:
                             //D
-                            $(imageId).rotate(angle + 45);
+                            $(playerImageId).rotate(angle + 45);
                             coreServices.socket().emit('PLAYERROTATE', roomId, {
                                 degree: -45
                             });
@@ -48,7 +53,7 @@ angular.module('game.controller', [])
                 });
 
                 $(window).mousemove(function(event) {
-                    $(imageId).css({"left" : event.pageX - 50, "top": event.pageY - 70});
+                    $(playerImageId).css({"left" : event.pageX - 50, "top": event.pageY - 70});
                     coreServices.socket().emit('PLAYERMOVEMENT', roomId, {
                         x: event.pageX,
                         y: event.pageY
@@ -61,14 +66,12 @@ angular.module('game.controller', [])
                 });
 
                 coreServices.socket().on('PLAYERMOVEMENT', function(data){
-                    var opponentImageId = '#' + opponent;
                     var x = data.x - 50;
                     var y = $(window).height() - data.y - 70;
                     $(opponentImageId).css({"left" : x, "top": y});
                 });
 
                 coreServices.socket().on('PLAYERROTATE', function(data){
-                    var opponentImageId = '#' + opponent;
                     var currentAngle = $(opponentImageId).getRotateAngle()[0];
                     if (isNaN(currentAngle)) currentAngle = 0;
                     var angle = data.degree + currentAngle;
@@ -76,7 +79,6 @@ angular.module('game.controller', [])
                 });
 
                 coreServices.socket().on('PLAYERSHOOT', function(){
-                    var opponentImageId = "#" + opponent;
                     var x = parseInt($(opponentImageId).css("left").replace("px", "")) + 50;
                     var y = parseInt($(opponentImageId).css("top").replace("px", "")) + 70;
                     var event = {
@@ -87,14 +89,20 @@ angular.module('game.controller', [])
                 });
 
                 coreServices.socket().on('PLAYERHIT', function(){
-                    var healthBar = "#" + player + "Health";
-                    var y = parseInt($(healthBar).css('height').replace('px', '')) - 15;
-                    $(healthBar).css('height', y);
+                    var y = parseInt($(playerHealth).css('height').replace('px', '')) - 15;
+                    $(playerHealth).css('height', y);
+                    if (y <= 0){
+                        $(window).unbind();
+                        $(document).unbind();
+                        $state.go('login', {message: {
+                            msg: 'You lost',
+                            status: 0
+                        }});
+                    }
                 });
 
                 var shootLaser = function(player, event, checkCollision){
-                    var imageId = '#' + player;
-                    var imageAngle = $(imageId).getRotateAngle()[0];
+                    var imageAngle = $("#" + player).getRotateAngle()[0];
                     if (isNaN(imageAngle)) imageAngle = 0;
                     if (imageAngle < 0) imageAngle += 360;
                     var laser = null;
@@ -144,10 +152,10 @@ angular.module('game.controller', [])
                     }
                 };
 
-                var animateLaser = function(element, position, checkCollision, leftStart, topStart, speed){
-                    $(element).css({"left":leftStart, "top": topStart});
+                var animateLaser = function(laser, position, checkCollision, leftStart, topStart, speed){
+                    $(laser).css({"left":leftStart, "top": topStart});
                     if (position === 'TOP'){
-                        $(element).animate(
+                        $(laser).animate(
                             {
                                 "top": "-=" + $(window).height() + "px"
                             },
@@ -156,7 +164,7 @@ angular.module('game.controller', [])
                                 "easing": "linear",
                                 step: function(){
                                     if (checkCollision){
-                                        checkCollisions(element);
+                                        checkCollisions(laser);
                                     }
                                 },
                                 complete: function(){
@@ -165,7 +173,7 @@ angular.module('game.controller', [])
                             }
                         );
                     } else if (position === 'TOPRIGHT'){
-                        $(element).animate(
+                        $(laser).animate(
                             {
                                 "top": "-=" + $(window).height() + "px",
                                 "left": "+=" + $(window).width() + "px"
@@ -175,7 +183,7 @@ angular.module('game.controller', [])
                                 "easing": "linear",
                                 step: function(){
                                     if (checkCollision){
-                                        checkCollisions(element);
+                                        checkCollisions(laser);
                                     }
                                 },
                                 complete: function(){
@@ -184,7 +192,7 @@ angular.module('game.controller', [])
                             }
                         );
                     } else if (position === 'RIGHT'){
-                        $(element).animate(
+                        $(laser).animate(
                             {
                                 "left": "+=" + $(window).width() + "px"
                             },
@@ -193,7 +201,7 @@ angular.module('game.controller', [])
                                 "easing": "linear",
                                 step: function(){
                                     if (checkCollision){
-                                        checkCollisions(element);
+                                        checkCollisions(laser);
                                     }
                                 },
                                 complete: function(){
@@ -202,7 +210,7 @@ angular.module('game.controller', [])
                             }
                         );
                     } else if (position === 'BOTTOMRIGHT'){
-                        $(element).animate(
+                        $(laser).animate(
                             {
                                 "top": "+=" + $(window).height() + "px",
                                 "left": "+=" + $(window).width() + "px"
@@ -212,7 +220,7 @@ angular.module('game.controller', [])
                                 "easing": "linear",
                                 step: function(){
                                     if (checkCollision){
-                                        checkCollisions(element);
+                                        checkCollisions(laser);
                                     }
                                 },
                                 complete: function(){
@@ -221,7 +229,7 @@ angular.module('game.controller', [])
                             }
                         );
                     } else if (position === 'BOTTOM'){
-                        $(element).animate(
+                        $(laser).animate(
                             {
                                 "top": "+=" + $(window).height() + "px"
                             },
@@ -230,7 +238,7 @@ angular.module('game.controller', [])
                                 "easing": "linear",
                                 step: function(){
                                     if (checkCollision){
-                                        checkCollisions(element);
+                                        checkCollisions(laser);
                                     }
                                 },
                                 complete: function(){
@@ -239,7 +247,7 @@ angular.module('game.controller', [])
                             }
                         );
                     } else if (position === 'BOTTOMLEFT'){
-                        $(element).animate(
+                        $(laser).animate(
                             {
                                 "top": "+=" + $(window).height() + "px",
                                 "left": "-=" + $(window).width() + "px"
@@ -249,7 +257,7 @@ angular.module('game.controller', [])
                                 "easing": "linear",
                                 step: function(){
                                     if (checkCollision){
-                                        checkCollisions(element);
+                                        checkCollisions(laser);
                                     }
                                 },
                                 complete: function(){
@@ -258,7 +266,7 @@ angular.module('game.controller', [])
                             }
                         );
                     } else if (position === 'LEFT'){
-                        $(element).animate(
+                        $(laser).animate(
                             {
                                 "left": "-=" + $(window).width() + "px"
                             },
@@ -267,7 +275,7 @@ angular.module('game.controller', [])
                                 "easing": "linear",
                                 step: function(){
                                     if (checkCollision){
-                                        checkCollisions(element);
+                                        checkCollisions(laser);
                                     }
                                 },
                                 complete: function(){
@@ -276,7 +284,7 @@ angular.module('game.controller', [])
                             }
                         );
                     } else if (position === 'TOPLEFT'){
-                        $(element).animate(
+                        $(laser).animate(
                             {
                                 "top": "-=" + $(window).height() + "px",
                                 "left": "-=" + $(window).width() + "px"
@@ -286,7 +294,7 @@ angular.module('game.controller', [])
                                 "easing": "linear",
                                 step: function(){
                                     if (checkCollision){
-                                        checkCollisions(element);
+                                        checkCollisions(laser);
                                     }
                                 },
                                 complete: function(){
@@ -320,12 +328,10 @@ angular.module('game.controller', [])
                     return (x1[1] > x2[0] || x1[0] === x2[0]);
                 }
 
-                var checkCollisions = function (element){
-                    var laser = element;
-                    var imageId = "#" + opponent;
+                var checkCollisions = function (element, checkCollision){
 
-                    var laserPosition = getPosition(laser);
-                    var imagePosition = getPosition(imageId);
+                    var laserPosition = getPosition(element);
+                    var imagePosition = getPosition(opponentImageId);
 
                     var horizontalMatch = comparePositions(laserPosition.x, imagePosition.x);
                     var verticalMatch = comparePositions(laserPosition.y, imagePosition.y);
@@ -333,21 +339,24 @@ angular.module('game.controller', [])
                     if (hit) {
                         $(element).stop();
                         $(element).remove();
-                        var healthBar = imageId + "Health";
-                        var y = parseInt($(healthBar).css('height').replace('px', '')) - 15;
-                        $(healthBar).css('height', y);
+
+                        var y = parseInt($(opponentHealth).css('height').replace('px', '')) - 15;
+
+                        $(opponentHealth).css('height', y);
                         coreServices.socket().emit('PLAYERHIT', roomId);
 
                         if (y <= 0){
-                            $state.go('login');
-                            $state.go('login', {message: 'You lost :('});
+                            $(window).unbind();
+                            $(document).unbind();
+                            $state.go('login', {message: {
+                                msg: 'You won',
+                                status: 1
+                            }});
                         }
 
-                        if (parseInt($("#" + opponent + "Health").css('height').replace('px', '')) <= 0){
-                            $state.go('login', {message: 'You won :)'});
-                        }
                     }
                 }
+
 
             });
 

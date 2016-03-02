@@ -4,6 +4,15 @@ angular.module('core.controller', [])
             $scope.username = '';
             $scope.opponent = '';
 
+            var message = $state.params.message;
+            if (message){
+                if (message.status){
+                    $('#wait').html(message.msg + ' <i class="fa fa-smile-o"></i>');
+                } else {
+                    $('#wait').html(message.msg + ' <i class="fa fa-frown-o"></i>');
+                }
+            }
+
             $('#randomButton').click(function () {
                 coreServices.socket().emit('NEWRANDOMUSER');
                 $('#wait').html('<i class="fa fa-cog fa-spin"></i> Searching..');
