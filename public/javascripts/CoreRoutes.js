@@ -1,14 +1,15 @@
 angular.module('core.routes', [])
-    .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
+    .config(['$stateProvider', '$urlRouterProvider', "$locationProvider",
+        function($stateProvider, $urlRouterProvider, $locationProvider) {
 
         $urlRouterProvider.otherwise("/");
+        $locationProvider.html5Mode(true);
 
         $stateProvider
             .state('login', {
                 url: '/',
                 templateUrl: 'templates/login.html',
-                controller: 'coreController',
-                params: {message: ''}
+                controller: 'coreController'
             })
             .state('game', {
                 url: '/',

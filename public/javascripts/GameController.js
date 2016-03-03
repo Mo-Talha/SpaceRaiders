@@ -92,12 +92,7 @@ angular.module('game.controller', [])
                     var y = parseInt($(playerHealth).css('height').replace('px', '')) - 15;
                     $(playerHealth).css('height', y);
                     if (y <= 0){
-                        $(window).unbind();
-                        $(document).unbind();
-                        $state.go('login', {message: {
-                            msg: 'You lost',
-                            status: 0
-                        }});
+                        window.location = '/';
                     }
                 });
 
@@ -346,12 +341,7 @@ angular.module('game.controller', [])
                         coreServices.socket().emit('PLAYERHIT', roomId);
 
                         if (y <= 0){
-                            $(window).unbind();
-                            $(document).unbind();
-                            $state.go('login', {message: {
-                                msg: 'You won',
-                                status: 1
-                            }});
+                            window.location = '/';
                         }
 
                     }
