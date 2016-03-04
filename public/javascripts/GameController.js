@@ -89,7 +89,6 @@ angular.module('game.controller', [])
                 });
 
                 coreServices.socket().on('PLAYERHIT', function(){
-                    console.log("GOT HIT");
                     var y = parseInt($(playerHealth).css('height').replace('px', '')) - 15;
                     $(playerHealth).css('height', y);
                     if (y <= 0){
@@ -303,7 +302,6 @@ angular.module('game.controller', [])
                 };
 
                 function getPosition(element) {
-                    console.log(element);
                     var position = $(element).position();
                     var width = $(element).width();
                     var height = $(element).height();
@@ -352,6 +350,7 @@ angular.module('game.controller', [])
                 };
 
                 var endGame = function(){
+                    $('.laser-beam').stop();
                     $(document).unbind();
                     $(window).unbind();
                     coreServices.socket().off('PLAYERMOVEMENT');
