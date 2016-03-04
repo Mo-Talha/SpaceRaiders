@@ -89,10 +89,12 @@ angular.module('game.controller', [])
                 });
 
                 coreServices.socket().on('PLAYERHIT', function(){
+                    console.log("GOT HIT");
                     var y = parseInt($(playerHealth).css('height').replace('px', '')) - 15;
                     $(playerHealth).css('height', y);
                     if (y <= 0){
-                        window.location = '/';
+                        endGame();
+                        $state.go('login', {message: 'You lost', won: false});
                     }
                 });
 
@@ -301,6 +303,7 @@ angular.module('game.controller', [])
                 };
 
                 function getPosition(element) {
+                    console.log(element);
                     var position = $(element).position();
                     var width = $(element).width();
                     var height = $(element).height();
@@ -323,7 +326,7 @@ angular.module('game.controller', [])
                     return (x1[1] > x2[0] || x1[0] === x2[0]);
                 }
 
-                var checkCollisions = function (element, checkCollision){
+                var checkCollisions = function (element){
 
                     var laserPosition = getPosition(element);
                     var imagePosition = getPosition(opponentImageId);
@@ -341,12 +344,23 @@ angular.module('game.controller', [])
                         coreServices.socket().emit('PLAYERHIT', roomId);
 
                         if (y <= 0){
-                            window.location = '/';
+                            endGame();
+                            $state.go('login', {message: "You won!", won: true});
                         }
 
                     }
-                }
+                };
 
+                var endGame = function(){
+                    $(document).unbind();
+                    $(window).unbind();
+                    coreServices.socket().off('PLAYERMOVEMENT');
+                    coreServices.socket().off('PLAYERROTATE');
+                    coreServices.socket().off('PLAYERSHOOT');
+                    coreServices.socket().off('PLAYERHIT');
+                    coreServices.socket().disconnect();
+                    coreServices.socket().connect();
+                };
 
             });
 

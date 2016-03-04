@@ -9,7 +9,8 @@ angular.module('core.routes', [])
             .state('login', {
                 url: '/',
                 templateUrl: 'templates/login.html',
-                controller: 'coreController'
+                controller: 'coreController',
+                params: {message: '', won: false}
             })
             .state('game', {
                 url: '/',
