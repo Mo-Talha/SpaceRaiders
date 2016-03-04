@@ -28,4 +28,21 @@ angular.module('core.controller', [])
                 });
             });
 
+            $("#playerButton").click(function(){
+                coreServices.socket().emit('NEWUSER', {
+                    username: $scope.username,
+                    opponent: $scope.opponent
+                });
+                $('#wait').html('<i class="fa fa-cog fa-spin"></i> Searching..');
+                coreServices.socket().on('LAUNCHGAME', function(data){
+                    $('#wait').html('');
+                    var id = coreServices.socket().id;
+                    if (data.alien === $scope.username){
+                        $state.go('game', {roomId: data.roomId, player: 'alien'});
+                    } else if (data.spaceship === $scope.username){
+                        $state.go('game', {roomId: data.roomId, player: 'spaceship'});
+                    }
+                });
+            });
+
     }]);
