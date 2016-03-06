@@ -12,18 +12,46 @@ angular.module('game.controller', [])
             var playerHealth = "#" + player + "Health";
             var opponentHealth = "#" + opponent + "Health";
 
+            var alienContext = $('#alien')[0].getContext("2d");
+            var alienImage = new Image();
+            alienImage.src = 'images/alien.png';
+            alienImage.onload = function(){
+                alienContext.drawImage(alienImage, 0, 0, 100, 140);
+            };
+
+            var alienHealthBarContext = $('#alienHealthBar')[0].getContext("2d");
+            var alienHealthBarImage = new Image();
+            alienHealthBarImage.src = 'images/alienHealthBar.png';
+            alienHealthBarImage.onload = function(){
+                alienHealthBarContext.drawImage(alienHealthBarImage, 0, 0, 45, 150);
+            };
+
+            var spaceshipContext = $('#spaceship')[0].getContext("2d");
+            var spaceshipImage = new Image();
+            spaceshipImage.src = 'images/spaceship.png';
+            spaceshipImage.onload = function(){
+                spaceshipContext.drawImage(spaceshipImage, 0, 0, 100, 140);
+            };
+
+            var spaceshipHealthBarContext = $('#spaceshipHealthBar')[0].getContext("2d");
+            var spaceshipHealthBarImage = new Image();
+            spaceshipHealthBarImage.src = 'images/alienHealthBar.png';
+            spaceshipHealthBarImage.onload = function(){
+                spaceshipHealthBarContext.drawImage(spaceshipHealthBarImage, 0, 0, 45, 150);
+            };
+
             if (player === 'alien'){
                 $(playerImageId).css("top", "77%").rotate(180);
                 $(opponentImageId).css("top", "1%").rotate(180);
                 $(playerHealthBar).css('top', '76%').rotate(180);
-                $(opponentHealthBar).css('right', '0.01%').rotate(180);
-                $(playerHealth).css({"top": "80%", "left":"10px", "height": '101px', "width": '19px'});
-                $(opponentHealth).css({"top": "4.25%", "right":"10px", "height": '101px', "width": '19px'});
+                $(opponentHealthBar).css('right', '0.01%');
+                $(playerHealth).css({"top": "80%", "left":"13px"});
+                $(opponentHealth).css({"top": "4.25%", "right":"13px"});
             } else if (player === 'spaceship'){
-                $(playerHealthBar).css('right', '0.01%');
-                $(opponentHealthBar).css('top', '76%');
-                $(playerHealth).css({"top": "80%", "left":"10px", "height": '101px', "width": '19px'});
-                $(opponentHealth).css({"top": "4.25%", "right":"10px", "height": '101px', "width": '19px'});
+                $(playerHealthBar).css('top', '76%').rotate(180);
+                $(opponentHealthBar).css('right', '0.01%');
+                $(playerHealth).css({"top": "80%", "left":"13px"});
+                $(opponentHealth).css({"top": "4.25%", "right":"13px"});
             }
 
             $(document).ready(function(){
@@ -63,6 +91,7 @@ angular.module('game.controller', [])
                 $(document).click(function(event){
                     shootLaser(player, event, true);
                     coreServices.socket().emit('PLAYERSHOOT', roomId);
+                    return false;
                 });
 
                 coreServices.socket().on('PLAYERMOVEMENT', function(data){
@@ -120,28 +149,20 @@ angular.module('game.controller', [])
                     }
 
                     if (Math.abs(imageAngle) === 0 || Math.abs(imageAngle) === 360){
-                        //Top
                         animateLaser(laser, 'TOP', checkCollision, event.pageX - 1, event.pageY - 50, 1000);
                     } else if (Math.abs(imageAngle) > 0 && Math.abs(imageAngle) < 90){
-                        //Top right
                         animateLaser(laser, 'TOPRIGHT', checkCollision, event.pageX + 28, event.pageY - 45, 1000);
                     } else if (Math.abs(imageAngle) === 90){
-                        //Right
                         animateLaser(laser, 'RIGHT', checkCollision, event.pageX + 28, event.pageY - 15, 1000);
                     } else if (Math.abs(imageAngle) > 90 && Math.abs(imageAngle) < 180){
-                        //Bottom right
                         animateLaser(laser, 'BOTTOMRIGHT', checkCollision, event.pageX + 28, event.pageY + 15, 1000);
                     } else if (Math.abs(imageAngle) === 180){
-                        //Bottom
                         animateLaser(laser, 'BOTTOM', checkCollision, event.pageX - 1, event.pageY + 15, 1000);
                     } else if (Math.abs(imageAngle) > 180 && Math.abs(imageAngle) < 270){
-                        //Bottom left
                         animateLaser(laser, 'BOTTOMLEFT', checkCollision, event.pageX - 28, event.pageY + 15, 1000);
                     } else if (Math.abs(imageAngle) === 270){
-                        //Left
                         animateLaser(laser, 'LEFT', checkCollision, event.pageX - 28, event.pageY - 15, 1000);
                     } else if (Math.abs(imageAngle) > 270 && Math.abs(imageAngle) < 360){
-                        //Top left
                         animateLaser(laser, 'TOPLEFT', checkCollision, event.pageX - 28, event.pageY - 45, 1000);
                     } else {
                         console.log("Error. Cannot find correct ship position.");
@@ -301,10 +322,22 @@ angular.module('game.controller', [])
                     }
                 };
 
-                function getPosition(element) {
+                function getPosition(element, rotated) {
                     var position = $(element).position();
                     var width = $(element).width();
                     var height = $(element).height();
+                    if (rotated){
+                        return {
+                            x: [
+                                position.left,
+                                position.left + height
+                            ],
+                            y: [
+                                position.top,
+                                position.top + width
+                            ]
+                        };
+                    }
                     return {
                         x: [
                             position.left,
@@ -327,18 +360,49 @@ angular.module('game.controller', [])
                 var checkCollisions = function (element){
 
                     var laserPosition = getPosition(element);
-                    var imagePosition = getPosition(opponentImageId);
+                    var imageAngle = $(opponentImageId).getRotateAngle()[0];
+                    if (isNaN(imageAngle)) imageAngle = 0;
+
+                    var rotated = false;
+                    if (Math.abs(imageAngle) != 0 && Math.abs(imageAngle) != 180) rotated = true;
+
+                    var imagePosition = getPosition(opponentImageId, rotated);
 
                     var horizontalMatch = comparePositions(laserPosition.x, imagePosition.x);
                     var verticalMatch = comparePositions(laserPosition.y, imagePosition.y);
+
+
+                    if (Math.abs(imageAngle) == 0 || Math.abs(imageAngle) == 180){
+                        horizontalMatch = comparePositions(laserPosition.x, imagePosition.x);
+                        verticalMatch = comparePositions(laserPosition.y, imagePosition.y);
+                    } else {
+                        horizontalMatch = comparePositions(laserPosition.x, imagePosition.x);
+                        verticalMatch = comparePositions(laserPosition.y, imagePosition.y);
+                        if (verticalMatch){
+                            console.log("Laser y: " + laserPosition.y);
+                            console.log("Vertical match y: " + imagePosition.x);
+
+                            var circle = $("<div style='background-color: red; border-radius: 5px; width: 5px; height: 5px;'></div>");
+                            var circle2 = $("<div style='background-color: red; border-radius: 5px; width: 5px; height: 5px;'></div>");
+                            $(circle).css({"position": "absolute"});
+                            $(circle).css({"left": imagePosition.x[0], "top": imagePosition.y[0]});
+                            $(circle2).css({"position": "absolute"});
+                            $(circle2).css({"left": imagePosition.x[0], "top": imagePosition.y[1]});
+                            $("#spaceshipPlayer").append(circle);
+                            $("#spaceshipPlayer").append(circle2);
+                            //$(element).stop();
+
+                        }
+                    }
+
                     var hit = horizontalMatch && verticalMatch;
                     if (hit) {
                         $(element).stop();
                         $(element).remove();
 
                         var y = parseInt($(opponentHealth).css('height').replace('px', '')) - 15;
-
                         $(opponentHealth).css('height', y);
+
                         coreServices.socket().emit('PLAYERHIT', roomId);
 
                         if (y <= 0){

@@ -60,7 +60,7 @@ html {
   background: transparent;
   box-shadow: 1755px 121px #FFF , 1374px 328px #FFF , 181px 1939px #FFF , 824px 1330px #FFF , 1089px 707px #FFF , 948px 959px #FFF , 1708px 1988px #FFF , 1369px 182px #FFF , 183px 1939px #FFF , 986px 1469px #FFF , 286px 938px #FFF , 1556px 780px #FFF , 756px 1117px #FFF , 1945px 1971px #FFF , 948px 578px #FFF , 145px 1345px #FFF , 651px 1322px #FFF , 805px 1038px #FFF , 166px 124px #FFF , 1944px 997px #FFF , 1702px 325px #FFF , 1520px 1280px #FFF , 1963px 1423px #FFF , 12px 1585px #FFF , 790px 1629px #FFF , 1773px 1934px #FFF , 528px 1713px #FFF , 754px 1345px #FFF , 516px 1430px #FFF , 1220px 1095px #FFF , 1810px 546px #FFF , 1690px 632px #FFF , 1978px 760px #FFF , 1376px 1660px #FFF , 764px 90px #FFF , 863px 1032px #FFF , 840px 1553px #FFF , 1609px 402px #FFF , 1475px 750px #FFF , 338px 1976px #FFF , 98px 1048px #FFF , 1290px 41px #FFF , 393px 608px #FFF , 1669px 1327px #FFF , 757px 1881px #FFF , 560px 1744px #FFF , 455px 1570px #FFF , 369px 932px #FFF , 1335px 39px #FFF , 711px 321px #FFF , 856px 1960px #FFF , 1630px 620px #FFF , 460px 157px #FFF , 691px 592px #FFF , 203px 960px #FFF , 1038px 256px #FFF , 1679px 32px #FFF , 747px 1867px #FFF , 1898px 997px #FFF , 1696px 1687px #FFF , 1302px 152px #FFF , 48px 884px #FFF , 614px 1353px #FFF , 1207px 1968px #FFF , 1859px 1873px #FFF , 1724px 1737px #FFF , 1900px 807px #FFF , 817px 1325px #FFF , 420px 1308px #FFF , 2000px 152px #FFF , 49px 345px #FFF , 239px 156px #FFF , 1313px 554px #FFF , 1170px 889px #FFF , 1825px 492px #FFF , 1693px 921px #FFF , 1029px 752px #FFF , 1815px 480px #FFF , 1270px 1339px #FFF , 939px 761px #FFF , 1991px 1236px #FFF , 967px 1640px #FFF , 1373px 1692px #FFF , 1847px 447px #FFF , 9px 58px #FFF , 1601px 795px #FFF , 1259px 1249px #FFF , 901px 894px #FFF , 1700px 1640px #FFF , 941px 1931px #FFF , 1168px 1383px #FFF , 1907px 648px #FFF , 505px 1288px #FFF , 562px 849px #FFF , 1351px 381px #FFF , 1916px 1426px #FFF , 1251px 1757px #FFF , 1145px 588px #FFF , 1923px 861px #FFF , 763px 418px #FFF;
 }
-
+/*
 @keyframes animStar {
   from {
     transform: translateY(0px);
@@ -69,13 +69,11 @@ html {
     transform: translateY(-2000px);
   }
 }
-
+*/
 
 #alien {
   position: absolute;
-  width:100px;
-  height:140px;
-  right: 50%;
+  right: 45%;
 }
 
 #alienHealthBar {
@@ -93,10 +91,8 @@ html {
 
 #spaceship {
   position: absolute;
-  width:100px;
-  height:140px;
   top: 77%;
-  right: 50%;
+  right: 45%;
 }
 
 #spaceshipHealthBar {
