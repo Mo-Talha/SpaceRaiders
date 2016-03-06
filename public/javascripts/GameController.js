@@ -120,6 +120,7 @@ angular.module('game.controller', [])
                 coreServices.socket().on('PLAYERHIT', function(){
                     var y = parseInt($(playerHealth).css('height').replace('px', '')) - 15;
                     $(playerHealth).css('height', y);
+                    $(playerHealth).css('width', 19);
                     if (y <= 0){
                         endGame();
                         $state.go('login', {message: 'You lost', won: false});
@@ -370,8 +371,7 @@ angular.module('game.controller', [])
 
                     var horizontalMatch = comparePositions(laserPosition.x, imagePosition.x);
                     var verticalMatch = comparePositions(laserPosition.y, imagePosition.y);
-
-
+                    
                     if (Math.abs(imageAngle) == 0 || Math.abs(imageAngle) == 180){
                         horizontalMatch = comparePositions(laserPosition.x, imagePosition.x);
                         verticalMatch = comparePositions(laserPosition.y, imagePosition.y);
@@ -402,6 +402,7 @@ angular.module('game.controller', [])
 
                         var y = parseInt($(opponentHealth).css('height').replace('px', '')) - 15;
                         $(opponentHealth).css('height', y);
+                        $(opponentHealth).css('width', 19);
 
                         coreServices.socket().emit('PLAYERHIT', roomId);
 
