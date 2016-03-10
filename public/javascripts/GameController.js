@@ -63,6 +63,8 @@ angular.module('game.controller', [])
                         case 65:
                             //A
                             $(playerImageId).rotate(angle - 45);
+                            //var imagePosition = getImagePosition(playerImageId);
+                            //testCollisons(imagePosition.x[0], imagePosition.y[0]);
                             coreServices.socket().emit('PLAYERROTATE', roomId, {
                                 degree: 45
                             });
@@ -70,6 +72,8 @@ angular.module('game.controller', [])
                         case 68:
                             //D
                             $(playerImageId).rotate(angle + 45);
+                            //var imagePosition = getImagePosition(playerImageId);
+                            //testCollisons(imagePosition.x[0], imagePosition.y[0]);
                             coreServices.socket().emit('PLAYERROTATE', roomId, {
                                 degree: -45
                             });
@@ -81,6 +85,7 @@ angular.module('game.controller', [])
                 });
 
                 $(window).mousemove(function(event) {
+                    //console.log("X: " + event.pageX + " Y: " + event.pageY);
                     $(playerImageId).css({"left" : event.pageX - 50, "top": event.pageY - 70});
                     coreServices.socket().emit('PLAYERMOVEMENT', roomId, {
                         x: event.pageX,
@@ -323,79 +328,65 @@ angular.module('game.controller', [])
                     }
                 };
 
-                function getPosition(element, rotated) {
+                function getLaserPosition(element) {
                     var position = $(element).position();
-                    var width = $(element).width();
-                    var height = $(element).height();
-                    if (rotated){
-                        return {
-                            x: [
-                                position.left,
-                                position.left + height
-                            ],
-                            y: [
-                                position.top,
-                                position.top + width
-                            ]
-                        };
-                    }
+                    var x = position.left;
+                    var y = position.top;
+
                     return {
-                        x: [
-                            position.left,
-                            position.left + width
-                        ],
-                        y: [
-                            position.top,
-                            position.top + height
-                        ]
+                        x: x,
+                        y: y
+                    };
+                }
+
+                function getImagePosition(element){
+                    var angle = $(element).getRotateAngle()[0];
+                    if (isNaN(angle)) angle = 0;
+                    angle *= Math.PI / 180;
+
+                    var position = $(element).position();
+                    var width = Math.abs(($(element).width() * Math.cos(Math.abs(angle)))) + Math.abs(($(element).height() * Math.sin(Math.abs(angle))));
+                    var height = Math.abs(($(element).height() * Math.cos(Math.abs(angle)))) + Math.abs(($(element).width() * Math.sin(Math.abs(angle))));
+
+                    var x = position.left + (width/2);
+                    var y = position.top + (height/2);
+
+                    return {
+                        x: x,
+                        y: y
                     };
                 }
 
                 function comparePositions(coordinate1, coordinate2) {
-                    //Left most coordinate
-                    var x1 = coordinate1[0] < coordinate2[0] ? coordinate1 : coordinate2;
-                    var x2 = coordinate1[0] < coordinate2[0] ? coordinate2 : coordinate1;
-                    return (x1[1] > x2[0] || x1[0] === x2[0]);
+                    var x1 = coordinate1.x > coordinate2.x ? coordinate1.x : coordinate2.x;
+                    var x2 = coordinate1.x < coordinate2.x ? coordinate1.x : coordinate2.x;
+                    var y1 = coordinate1.y > coordinate2.y ? coordinate1.y : coordinate2.y;
+                    var y2 = coordinate1.y < coordinate2.y ? coordinate1.y : coordinate2.y;
+                    console.log("X1: " + x1 + " X2: " + x2 + " Y1: " + y1 + " Y2: " + y2);
+                    var distance = Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
+                    console.log("D: " + distance);
+                    return distance;
                 }
+
+                var testCollisons = function(x, y){
+                    var circle = $("<div style='background-color: white; border-radius: 5px; width: 5px; height: 5px;'></div>");
+                    $(circle).css({"position": "absolute"});
+                    $(circle).css({"left": x, "top": y});
+                    $("#spaceshipPlayer").append(circle);
+                };
 
                 var checkCollisions = function (element){
 
-                    var laserPosition = getPosition(element);
-                    var imageAngle = $(opponentImageId).getRotateAngle()[0];
-                    if (isNaN(imageAngle)) imageAngle = 0;
+                    var laserPosition = getLaserPosition(element);
+                    var imagePosition = getImagePosition(opponentImageId);
 
-                    var rotated = false;
-                    if (Math.abs(imageAngle) != 0 && Math.abs(imageAngle) != 180) rotated = true;
+                    var hit = false;
+                    var distance = comparePositions(laserPosition, imagePosition);
 
-                    var imagePosition = getPosition(opponentImageId, rotated);
-
-                    var horizontalMatch = comparePositions(laserPosition.x, imagePosition.x);
-                    var verticalMatch = comparePositions(laserPosition.y, imagePosition.y);
-                    
-                    if (Math.abs(imageAngle) == 0 || Math.abs(imageAngle) == 180){
-                        horizontalMatch = comparePositions(laserPosition.x, imagePosition.x);
-                        verticalMatch = comparePositions(laserPosition.y, imagePosition.y);
-                    } else {
-                        horizontalMatch = comparePositions(laserPosition.x, imagePosition.x);
-                        verticalMatch = comparePositions(laserPosition.y, imagePosition.y);
-                        if (verticalMatch){
-                            console.log("Laser y: " + laserPosition.y);
-                            console.log("Vertical match y: " + imagePosition.x);
-
-                            var circle = $("<div style='background-color: red; border-radius: 5px; width: 5px; height: 5px;'></div>");
-                            var circle2 = $("<div style='background-color: red; border-radius: 5px; width: 5px; height: 5px;'></div>");
-                            $(circle).css({"position": "absolute"});
-                            $(circle).css({"left": imagePosition.x[0], "top": imagePosition.y[0]});
-                            $(circle2).css({"position": "absolute"});
-                            $(circle2).css({"left": imagePosition.x[0], "top": imagePosition.y[1]});
-                            $("#spaceshipPlayer").append(circle);
-                            $("#spaceshipPlayer").append(circle2);
-                            //$(element).stop();
-
-                        }
+                    if (distance <= ($(opponentImageId).width() / 2)){
+                        hit = true;
                     }
 
-                    var hit = horizontalMatch && verticalMatch;
                     if (hit) {
                         $(element).stop();
                         $(element).remove();
