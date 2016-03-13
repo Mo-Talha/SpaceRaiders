@@ -1,7 +1,7 @@
 # SpaceRaiders
 Multiplayer space game built on Node, Socket.io and AngularJS.
 
-Live demo: spaceraiders.mo-talha.ca
+Live demo: http://spaceraiders.mo-talha.ca
 
 ### Installation
 Assuming debian linux.
