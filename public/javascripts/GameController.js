@@ -153,19 +153,19 @@ angular.module('game.controller', [])
                     if (Math.abs(imageAngle) === 0 || Math.abs(imageAngle) === 360){
                         animateLaser(laser, 'TOP', checkCollision, event.pageX - 1, event.pageY - 50, 1000);
                     } else if (Math.abs(imageAngle) > 0 && Math.abs(imageAngle) < 90){
-                        animateLaser(laser, 'TOPRIGHT', checkCollision, event.pageX + 28, event.pageY - 45, 1000);
+                        animateLaser(laser, 'TOPRIGHT', checkCollision, event.pageX + 28, event.pageY - 45, 2000);
                     } else if (Math.abs(imageAngle) === 90){
                         animateLaser(laser, 'RIGHT', checkCollision, event.pageX + 28, event.pageY - 15, 1000);
                     } else if (Math.abs(imageAngle) > 90 && Math.abs(imageAngle) < 180){
-                        animateLaser(laser, 'BOTTOMRIGHT', checkCollision, event.pageX + 28, event.pageY + 15, 1000);
+                        animateLaser(laser, 'BOTTOMRIGHT', checkCollision, event.pageX + 28, event.pageY + 15, 2000);
                     } else if (Math.abs(imageAngle) === 180){
                         animateLaser(laser, 'BOTTOM', checkCollision, event.pageX - 1, event.pageY + 15, 1000);
                     } else if (Math.abs(imageAngle) > 180 && Math.abs(imageAngle) < 270){
-                        animateLaser(laser, 'BOTTOMLEFT', checkCollision, event.pageX - 28, event.pageY + 15, 1000);
+                        animateLaser(laser, 'BOTTOMLEFT', checkCollision, event.pageX - 28, event.pageY + 15, 2000);
                     } else if (Math.abs(imageAngle) === 270){
                         animateLaser(laser, 'LEFT', checkCollision, event.pageX - 28, event.pageY - 15, 1000);
                     } else if (Math.abs(imageAngle) > 270 && Math.abs(imageAngle) < 360){
-                        animateLaser(laser, 'TOPLEFT', checkCollision, event.pageX - 28, event.pageY - 45, 1000);
+                        animateLaser(laser, 'TOPLEFT', checkCollision, event.pageX - 28, event.pageY - 45, 2000);
                     } else {
                         console.log("Error. Cannot find correct ship position.");
                     }
@@ -194,8 +194,8 @@ angular.module('game.controller', [])
                     } else if (position === 'TOPRIGHT'){
                         $(laser).animate(
                             {
-                                "top": "-=" + $(window).height() + "px",
-                                "left": "+=" + $(window).width() + "px"
+                                "top": "-=" + ($(window).width() * (Math.tan(0.785398))),
+                                "left": "+=" + $(window).width()
                             },
                             {
                                 duration: speed,
@@ -231,8 +231,9 @@ angular.module('game.controller', [])
                     } else if (position === 'BOTTOMRIGHT'){
                         $(laser).animate(
                             {
-                                "top": "+=" + $(window).height() + "px",
-                                "left": "+=" + $(window).width() + "px"
+
+                                "top": "+=" + $(window).height(),
+                                "left": "+=" + ($(window).height() * (Math.tan(0.785398)))
                             },
                             {
                                 duration: speed,
@@ -268,8 +269,8 @@ angular.module('game.controller', [])
                     } else if (position === 'BOTTOMLEFT'){
                         $(laser).animate(
                             {
-                                "top": "+=" + $(window).height() + "px",
-                                "left": "-=" + $(window).width() + "px"
+                                "top": "+=" + ($(window).height() * (Math.tan(0.785398))),
+                                "left": "-=" + $(window).height()
                             },
                             {
                                 duration: speed,
@@ -305,8 +306,8 @@ angular.module('game.controller', [])
                     } else if (position === 'TOPLEFT'){
                         $(laser).animate(
                             {
-                                "top": "-=" + $(window).height() + "px",
-                                "left": "-=" + $(window).width() + "px"
+                                "top": "-=" + ($(window).width() * (Math.tan(0.785398))),
+                                "left": "-=" + $(window).width()
                             },
                             {
                                 duration: speed,
