@@ -43,15 +43,15 @@ angular.module('game.controller', [])
             if (player === 'alien'){
                 $(playerImageId).css("top", "77%").rotate(180);
                 $(opponentImageId).css("top", "1%").rotate(180);
-                $(playerHealthBar).css('top', '76%').rotate(180);
-                $(opponentHealthBar).css('right', '0.01%');
-                $(playerHealth).css({"top": "80%", "left":"13px"});
-                $(opponentHealth).css({"top": "4.25%", "right":"13px"});
+                $(playerHealthBar).css('bottom', '1%').rotate(180);
+                $(opponentHealthBar).css({'right': '0.01%', 'top': '1%'});
+                $(playerHealth).css({"bottom": "29.6875px", "left":"13px"});
+                $(opponentHealth).css({"top": "29.6875px", "right":"13px"});
             } else if (player === 'spaceship'){
-                $(playerHealthBar).css('top', '76%').rotate(180);
-                $(opponentHealthBar).css('right', '0.01%');
-                $(playerHealth).css({"top": "80%", "left":"13px"});
-                $(opponentHealth).css({"top": "4.25%", "right":"13px"});
+                $(playerHealthBar).css('bottom', '1%').rotate(180);
+                $(opponentHealthBar).css({'right': '0.01%', 'top': '1%'});
+                $(playerHealth).css({"bottom": "29.6875px", "left":"13px"});
+                $(opponentHealth).css({"top": "29.6875px", "right":"13px"});
             }
 
             $(document).ready(function(){
@@ -63,8 +63,6 @@ angular.module('game.controller', [])
                         case 65:
                             //A
                             $(playerImageId).rotate(angle - 45);
-                            //var imagePosition = getImagePosition(playerImageId);
-                            //testCollisons(imagePosition.x[0], imagePosition.y[0]);
                             coreServices.socket().emit('PLAYERROTATE', roomId, {
                                 degree: 45
                             });
@@ -72,8 +70,6 @@ angular.module('game.controller', [])
                         case 68:
                             //D
                             $(playerImageId).rotate(angle + 45);
-                            //var imagePosition = getImagePosition(playerImageId);
-                            //testCollisons(imagePosition.x[0], imagePosition.y[0]);
                             coreServices.socket().emit('PLAYERROTATE', roomId, {
                                 degree: -45
                             });
@@ -362,10 +358,7 @@ angular.module('game.controller', [])
                     var x2 = coordinate1.x < coordinate2.x ? coordinate1.x : coordinate2.x;
                     var y1 = coordinate1.y > coordinate2.y ? coordinate1.y : coordinate2.y;
                     var y2 = coordinate1.y < coordinate2.y ? coordinate1.y : coordinate2.y;
-                    console.log("X1: " + x1 + " X2: " + x2 + " Y1: " + y1 + " Y2: " + y2);
-                    var distance = Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
-                    console.log("D: " + distance);
-                    return distance;
+                    return (Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2)));
                 }
 
                 var testCollisons = function(x, y){
